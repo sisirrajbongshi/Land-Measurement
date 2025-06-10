@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="as">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assamese Land Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #e3f2fd;
+      color: #222;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #0d47a1;
+    }
+
+    .section {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    label, textarea, input, button, select {
+      display: block;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    textarea, input, select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #0d47a1;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background-color: #08306b;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>মাটিৰ হিচাপ</h1>
+
+  <div class="section">
+    <label for="method"> যিকোনো এটি পদ্ধতি বাচনি কৰক:</label>
+    <select id="method">
+      <option value="old">পুৰণি পদ্ধতি</option>
+      <option value="gov">চৰকাৰী পদ্ধতি</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <h2>বৰ্গ/আয়ত আকৃতিৰ বাবে</h2>
+    <label>পূব দিশৰ দৈৰ্ঘ্য (ফুট): <input type="number" id="east" /></label>
+    <label>পশ্চিম দিশৰ দৈৰ্ঘ্য (ফুট): <input type="number" id="west" /></label>
+    <label>উত্তৰ দিশৰ দৈৰ্ঘ্য (ফুট): <input type="number" id="north" /></label>
+    <label>দক্ষিণ দিশৰ দৈৰ্ঘ্য (ফুট): <input type="number" id="south" /></label>
+    <button onclick="calculateRectangularArea()">মাটি কালি উলিয়াব</button>
+    <p id="result1"></p>
+  </div>
+
+  <div class="section">
+    <h2>(Irregular)নিৰ্দিষ্ট আকাৰ নোহোৱা মাটিৰ বাবে</h2>
+    <label>প্ৰত্যেক কোণৰ স্থানাঙ্ক (X,Y) লিখক, প্ৰতিটো স্থানাঙ্ক এটা নতুন শাৰীত লিখক:</label>
+    <textarea id="coordinates" rows="6" placeholder="উদাহৰণ:
+10,20
+20,40
+40,30
+30,10"></textarea>
+    <button onclick="calculateIrregularArea()">মাটি কালি উলিয়াওক</button>
+    <p id="result2"></p>
+  </div>
+
+  <div class="section">
+    <h2>ত্ৰিভূজ আকৃতিৰ মাটিৰ বাবে</h2>
+    <label>প্ৰথম বাহু (ফুট): <input type="number" id="a" /></label>
+    <label>দ্বিতীয় বাহু (ফুট): <input type="number" id="b" /></label>
+    <label>তৃতীয় বাহু (ফুট): <input type="number" id="c" /></label>
+    <button onclick="calculateTriangleArea()">মাটি কালি উলিয়াব</button>
+    <p id="result3"></p>
+  </div>
+
+  <div class="section">
+    <h2>বৃত্ত আকৃতিৰ মাটিৰ বাবে</h2>
+    <label>ব্যাসাৰ্ধ (ফুট): <input type="number" id="radius" /></label>
+    <button onclick="calculateCircleArea()">মাটি কালি উলিয়াব</button>
+    <p id="result4"></p>
+  </div>
+
+  <footer>
+    &copy; Dr Sisir Kumar Rajbongshi
+  </footer>
+
+  <script>
+    function calculateRectangularArea() {
+      const east = parseFloat(document.getElementById("east").value);
+      const west = parseFloat(document.getElementById("west").value);
+      const north = parseFloat(document.getElementById("north").value);
+      const south = parseFloat(document.getElementById("south").value);
+      const method = document.getElementById("method").value;
+
+      const length = (east + west) / 2;
+      const width = (north + south) / 2;
+      const areaSqFt = length * width;
+
+      displayResult(areaSqFt, method, "result1");
+    }
+
+    function calculateIrregularArea() {
+      const raw = document.getElementById("coordinates").value.trim();
+      const lines = raw.split("\n");
+      const coords = lines.map(line => {
+        const [x, y] = line.split(",").map(Number);
+        return { x, y };
+      });
+
+      let sum1 = 0, sum2 = 0;
+      for (let i = 0; i < coords.length; i++) {
+        const current = coords[i];
+        const next = coords[(i + 1) % coords.length];
+        sum1 += current.x * next.y;
+        sum2 += current.y * next.x;
+      }
+
+      const areaSqFt = Math.abs((sum1 - sum2) / 2);
+      const method = document.getElementById("method").value;
+
+      displayResult(areaSqFt, method, "result2");
+    }
+
+    function calculateTriangleArea() {
+      const a = parseFloat(document.getElementById("a").value);
+      const b = parseFloat(document.getElementById("b").value);
+      const c = parseFloat(document.getElementById("c").value);
+      const method = document.getElementById("method").value;
+
+      const s = (a + b + c) / 2;
+      const areaSqFt = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+
+      displayResult(areaSqFt, method, "result3");
+    }
+
+    function calculateCircleArea() {
+      const radius = parseFloat(document.getElementById("radius").value);
+      const method = document.getElementById("method").value;
+
+      const areaSqFt = Math.PI * radius * radius;
+
+      displayResult(areaSqFt, method, "result4");
+    }
+
+    function displayResult(areaSqFt, method, elementId) {
+      let result = `মাটিৰ কালি: ${areaSqFt.toFixed(2)} বৰ্গফুট\n`;
+
+      if (method === "old") {
+        const lecha = Math.floor(areaSqFt / 144);
+        const remaining = (areaSqFt % 144).toFixed(0);
+        result += `অথবা: ${lecha} লেচা ${remaining} বৰ্গফুট`;
+      } else {
+        const sqm = areaSqFt * 0.092903;
+        const aar = sqm / 100;
+        result += `অথবা: ${sqm.toFixed(2)} বৰ্গ মিটাৰ (${aar.toFixed(2)} আৰ্)`;
+      }
+
+      document.getElementById(elementId).innerText = result;
+    }
+  </script>
+</body>
+
+</html>
