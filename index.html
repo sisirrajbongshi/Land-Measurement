@@ -4,9 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Assamese Land Calculator - মাটিৰ হিচাপ। বৰ্গ, ত্ৰিভূজ, বৃত্ত আৰু নিৰ্দিষ্ট আকাৰ নোহোৱা মাটিৰ ক্ষেত্ৰফল উলিয়াওক পুৰণি বা চৰকাৰী পদ্ধতিত।">
-  <meta name="google-site-verification" content="JB6D1jfOIIUsYr7ZLiwbLi19kbW5t3q_MVMdwgnxIo0" />
-  <title>Land Calculator in Assamese</title>
+  <meta name="description" content="Assamese Land Calculator - মাটি মাপনী সহায়ক। বৰ্গ, ত্ৰিভূজ, বৃত্ত আৰু অমিতাকৃতি মাটিৰ ক্ষেত্ৰফল উলিয়াওক পুৰণি বা চৰকাৰী পদ্ধতিত।">
+  <title>ASSAMESE LAND CALCULATOR</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -65,10 +64,10 @@
 </head>
 
 <body>
-  <h1>মাটিৰ হিচাপ</h1>
+  <h1>ASSAMESE LAND CALCULATOR</h1>
 
   <div class="section">
-    <label for="method"> যিকোনো এটি পদ্ধতি বাচনি কৰক:</label>
+    <label for="method">মাপনিৰ পদ্ধতি বাচনি কৰক:</label>
     <select id="method">
       <option value="old">পুৰণি পদ্ধতি</option>
       <option value="gov">চৰকাৰী পদ্ধতি</option>
@@ -76,7 +75,7 @@
   </div>
 
   <div class="section">
-    <h2>বৰ্গ/আয়ত আকৃতিৰ বাবে</h2>
+    <h2>বৰ্গ/আয়ত আকৃতিৰ মাটিৰ বাবে</h2>
     <label>পূব দিশৰ দৈৰ্ঘ্য (ফুট): <input type="number" id="east" /></label>
     <label>পশ্চিম দিশৰ দৈৰ্ঘ্য (ফুট): <input type="number" id="west" /></label>
     <label>উত্তৰ দিশৰ দৈৰ্ঘ্য (ফুট): <input type="number" id="north" /></label>
@@ -86,8 +85,8 @@
   </div>
 
   <div class="section">
-    <h2>(Irregular)নিৰ্দিষ্ট আকাৰ নোহোৱা মাটিৰ বাবে</h2>
-    <label>প্ৰত্যেক কোণৰ স্থানাঙ্ক (X,Y) লিখক, প্ৰতিটো স্থানাঙ্ক এটা নতুন শাৰীত লিখক:</label>
+    <h2>অমিতাকৃতি (Irregular) মাটিৰ বাবে</h2>
+    <label>প্ৰত্যেক কোণৰ স্থানাঙ্ক (X,Y) লিখক, প্ৰতিটো এটা নতুন শাৰীত:</label>
     <textarea id="coordinates" rows="6" placeholder="উদাহৰণ:
 10,20
 20,40
@@ -179,9 +178,14 @@
       let result = `মাটিৰ কালি: ${areaSqFt.toFixed(2)} বৰ্গফুট\n`;
 
       if (method === "old") {
-        const lecha = Math.floor(areaSqFt / 144);
-        const remaining = (areaSqFt % 144).toFixed(0);
-        result += `অথবা: ${lecha} লেচা ${remaining} বৰ্গফুট`;
+        const totalLecha = areaSqFt / 144;
+        const fullBigha = Math.floor(totalLecha / 100);
+        const remainingLechaAfterBigha = totalLecha % 100;
+        const fullKotha = Math.floor(remainingLechaAfterBigha / 20);
+        const lecha = Math.floor(remainingLechaAfterBigha % 20);
+        const remainingSqFt = Math.round(areaSqFt % 144);
+
+        result += `অথবা: ${fullBigha} বিঘা, ${fullKotha} কঠা, ${lecha} লেচা ${remainingSqFt} বৰ্গফুট`;
       } else {
         const sqm = areaSqFt * 0.092903;
         const aar = sqm / 100;
@@ -191,11 +195,6 @@
       document.getElementById(elementId).innerText = result;
     }
   </script>
-  <!-- Add this at the very bottom inside <body> -->
-<p style="display:none;">
-  অসমীয়া মাটি কেলকুলেটৰ, Assamese land calculator, মাটি জোখ, লেচা, কঠা, বিঘা, পুৰা, Govt Land Unit Converter, Old Measurement System, Online Assamese Land Area Tool
-</p>
-
 </body>
 
 </html>
